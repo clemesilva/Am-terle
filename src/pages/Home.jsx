@@ -19,7 +19,7 @@ function Home() {
             Encuentra tu Rutina
           </Link>
           <Link
-            to="/upload-routine"
+            to="/subirRutina"
             className="bg-gray-600 text-yellow-100 px-6 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-gray-500 transition duration-300"
           >
             Subir Rutina

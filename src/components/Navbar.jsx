@@ -45,21 +45,31 @@ export default function Navbar1() {
             INICIO
           </Link>
         </NavbarItem>
+
         <NavbarItem>
           <Link to="/routines" href="#" className="text-yellow-100">
             RUTINAS
           </Link>
         </NavbarItem>
+
         <NavbarItem>
           <Link to="/nutrition" className="text-yellow-100" href="#">
             NUTRICIÓN
           </Link>
         </NavbarItem>
+
+        <NavbarItem>
+          <Link to="/subirRutina" className="text-yellow-100" href="#">
+            SUBIR RUTINA
+          </Link>
+        </NavbarItem>
+
         <NavbarItem>
           <Link to="/sensations" className="text-yellow-100" href="#">
             SENSACIONES
           </Link>
         </NavbarItem>
+
         <NavbarItem>
           <Link to="/calendar" className="text-yellow-100" href="#">
             CALENDARIO{" "}

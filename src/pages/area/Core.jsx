@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { getRutinasPorArea } from "../firebase/firebase";
+import React, { useEffect, useState } from "react";
+import { getRutinasPorArea } from "../../firebase/firebase";
 
-function Nutrition() {
+function Core() {
   const [rutinas, setRutinas] = useState([]);
 
-  // Función para cargar las rutinas de FullBody
+  // Función para cargar las rutinas de Core
   const cargarRutinas = async () => {
-    const rutinasFullBody = await getRutinasPorArea("Nutricion");
-    setRutinas(rutinasFullBody);
+    const rutinasCore = await getRutinasPorArea("Core");
+    setRutinas(rutinasCore);
   };
 
   // Cargar las rutinas cuando el componente se monta
@@ -18,14 +18,10 @@ function Nutrition() {
   return (
     <div className="p-6 bg-neutral-800">
       <h1 className="text-3xl font-bold mb-4 text-yellow-100">
-        Guías de Nutrición a tu alcance
+        Rutinas de Core
       </h1>
       <p className="text-lg mb-8 text-white">
-        Cada persona es diferente, por lo que no existe una única forma de
-        alimentarse correctamente. Sin embargo, podemos aprender de las guías
-        nutricionales de otros para encontrar lo que mejor funciona para
-        nosotros. Aquí encontrarás algunos consejos y snacks que podrían
-        ayudarte a descubrir lo que mejor se adapta a ti.{" "}
+        Explora las rutinas de Core subidas por la comunidad.
       </p>
       <div className="space-y-6">
         {rutinas.length > 0 ? (
@@ -55,7 +51,7 @@ function Nutrition() {
           ))
         ) : (
           <p className="text-white">
-            No hay rutinas disponibles para FullBody en este momento.
+            No hay rutinas disponibles para Core en este momento.
           </p>
         )}
       </div>
@@ -63,4 +59,4 @@ function Nutrition() {
   );
 }
 
-export default Nutrition;
+export default Core;

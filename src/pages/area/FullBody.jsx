@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { getRutinasPorArea } from "../firebase/firebase";
+import { getRutinasPorArea } from "../../firebase/firebase";
 
-function Nutrition() {
+function FullBody() {
   const [rutinas, setRutinas] = useState([]);
 
   // Función para cargar las rutinas de FullBody
   const cargarRutinas = async () => {
-    const rutinasFullBody = await getRutinasPorArea("Nutricion");
+    const rutinasFullBody = await getRutinasPorArea("Full Body");
     setRutinas(rutinasFullBody);
   };
 
@@ -18,14 +18,10 @@ function Nutrition() {
   return (
     <div className="p-6 bg-neutral-800">
       <h1 className="text-3xl font-bold mb-4 text-yellow-100">
-        Guías de Nutrición a tu alcance
+        Rutina cuerpo completo
       </h1>
       <p className="text-lg mb-8 text-white">
-        Cada persona es diferente, por lo que no existe una única forma de
-        alimentarse correctamente. Sin embargo, podemos aprender de las guías
-        nutricionales de otros para encontrar lo que mejor funciona para
-        nosotros. Aquí encontrarás algunos consejos y snacks que podrían
-        ayudarte a descubrir lo que mejor se adapta a ti.{" "}
+        Explora las rutinas de FullBody subidas por la comunidad.
       </p>
       <div className="space-y-6">
         {rutinas.length > 0 ? (
@@ -63,4 +59,4 @@ function Nutrition() {
   );
 }
 
-export default Nutrition;
+export default FullBody;
