@@ -35,7 +35,7 @@ function SubirRutina() {
     <Card
       color="transparent"
       shadow={false}
-      className="bg-neutral-800 p-8 rounded-lg border-2 border-yellow-100" // Cambia a un borde sólido
+      className="bg-neutral-800 p-8 rounded-lg border-2 border-neutral-800 max-w-md mx-auto" // Cambia el ancho máximo a un valor menor
     >
       <Typography variant="h4" color="white" className="text-center">
         Subir Rutina
@@ -45,7 +45,7 @@ function SubirRutina() {
       </Typography>
       <form
         onSubmit={handleSubmit}
-        className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96 mx-auto"
+        className="mt-8 mb-2 w-full mx-auto" // Ajusta el ancho del form
       >
         <div className="mb-1 flex flex-col gap-6">
           <Typography variant="h6" color="white" className="-mb-3">
@@ -58,7 +58,7 @@ function SubirRutina() {
             placeholder="Nicolas Pirozzi"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
-            className="!border-yellow-100 focus:!border-yellow-100 bg-neutral-700 text-yellow-100" // Borde amarillo sólido
+            className="!border-yellow-100 focus:!border-yellow-100 text-yellow-100 "
             labelProps={{
               className: "before:content-none after:content-none",
             }}
@@ -73,7 +73,7 @@ function SubirRutina() {
             placeholder="nombre@mail.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="!border-yellow-100 focus:!border-yellow-100 text-yellow-100 bg-neutral-700" // Borde amarillo sólido
+            className="!border-yellow-100 focus:!border-yellow-100 text-yellow-100 bg-neutral-700"
             labelProps={{
               className: "before:content-none after:content-none",
             }}
@@ -86,7 +86,7 @@ function SubirRutina() {
             size="lg"
             value={area}
             onChange={(e) => setArea(e.target.value)}
-            className="!border-yellow-100 focus:!border-yellow-100 text-yellow-100 bg-neutral-700" // Borde amarillo sólido
+            className="!border-yellow-100 focus:!border-yellow-100 text-yellow-100 bg-neutral-700"
           >
             <option value="">Selecciona área</option>
             <option value="Piernas">Piernas (tronco inferior)</option>
@@ -105,7 +105,7 @@ function SubirRutina() {
             placeholder="Ej: Rutina dura, tiene artos isquitibial y cardio, me demoré aprox 30 minutos y esta ideal de tiempo"
             value={descripcionRutina}
             onChange={(e) => setDescripcionRutina(e.target.value)}
-            className="!border-yellow-100 focus:!border-yellow-100 text-yellow-100 bg-neutral-700 p-2 rounded" // Borde amarillo sólido
+            className="!border-yellow-100 focus:!border-yellow-100 text-yellow-100 bg-neutral-700 p-2 rounded"
           />
 
           <Typography variant="h6" color="white" className="-mb-3">
@@ -118,11 +118,10 @@ function SubirRutina() {
             accept="jpg,.jpeg,.png,.pdf"
             size="lg"
             onChange={(e) => {
-              const file = e.target.files[0]; // Capturamos el archivo
-              console.log(file); // Mostramos el archivo en la consola
-              setRutinaFile(file); // Asignamos el archivo a tu estado o lógica
+              const file = e.target.files[0];
+              setRutinaFile(file);
             }}
-            className="!border-yellow-100 focus:!border-yellow-100 text-yellow-100 bg-neutral-700" // Borde amarillo sólido
+            className="!border-yellow-100 focus:!border-yellow-100 text-yellow-100 bg-neutral-700"
             labelProps={{
               className: "before:content-none after:content-none",
             }}
@@ -139,5 +138,4 @@ function SubirRutina() {
     </Card>
   );
 }
-
 export default SubirRutina;

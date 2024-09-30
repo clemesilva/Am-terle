@@ -13,30 +13,37 @@ import Core from "./pages/area/Core.jsx";
 import FullBody from "./pages/area/FullBody.jsx";
 import MovilidadActivacion from "./pages/area/MovilidadActivacion.jsx";
 import TroncoSuperior from "./pages/area/TroncoSuperior.jsx";
+import { Card, Input, Button, Typography } from "@material-tailwind/react";
 
 function App() {
   return (
     <Router>
-      <div className="bg-neutral-600 min-h-screen ">
+      <div className="bg-neutral-800 min-h-screen ">
         <Navbar1 />
-        <div className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/routines" element={<Routines />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/nutrition" element={<Nutrition />} />
-            <Route path="/sensations" element={<Sensations />} />
-            <Route path="/piernas" element={<Piernas />} />
-            <Route path="/subirRutina" element={<SubirRutina />} />
-            <Route path="/core" element={<Core />} />
-            <Route path="/fullbody" element={<FullBody />} />
-            <Route
-              path="/movilidadActivacion"
-              element={<MovilidadActivacion />}
-            />
-            <Route path="/troncoSuperior" element={<TroncoSuperior />} />
-          </Routes>
-        </div>
+        <Card
+          color="transparent"
+          shadow={false}
+          className="bg-neutral-800 p-8 rounded-lg border-2 border-yellow-100 flex-grow"
+        >
+          <div className="flex-grow">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/routines" element={<Routines />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/nutrition" element={<Nutrition />} />
+              <Route path="/sensations" element={<Sensations />} />
+              <Route path="/piernas" element={<Piernas />} />
+              <Route path="/subirRutina" element={<SubirRutina />} />
+              <Route path="/core" element={<Core />} />
+              <Route path="/fullbody" element={<FullBody />} />
+              <Route
+                path="/movilidadActivacion"
+                element={<MovilidadActivacion />}
+              />
+              <Route path="/troncoSuperior" element={<TroncoSuperior />} />
+            </Routes>
+          </div>
+        </Card>
         <Footer1 />
       </div>
     </Router>

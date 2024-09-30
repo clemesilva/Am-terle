@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { getRutinasPorArea } from "../../firebase/firebase";
+import InputBuscador from "../../components/InputBuscador";
 
 function TroncoSuperior() {
   const [rutinas, setRutinas] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para la búsqueda
 
   const cargarRutinas = async () => {
     const rutinasPierna = await getRutinasPorArea("Tronco Superior");
@@ -13,6 +15,16 @@ function TroncoSuperior() {
     cargarRutinas();
   }, []);
 
+  // Función que se pasa a InputBuscador, maneja el término de búsqueda
+  const handleSearch = (term) => {
+    console.log("Valor del input:", term); // Ver el valor en la consola
+    setSearchTerm(term); // Actualiza el estado con el término de búsqueda
+  };
+
+  // Filtrar las rutinas basado en el término de búsqueda
+  const rutinasFiltradas = rutinas.filter((rutina) =>
+    rutina.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   return (
     <div className="p-6 bg-neutral-800">
       <h1 className="text-3xl font-bold mb-4 text-yellow-100">
@@ -21,6 +33,8 @@ function TroncoSuperior() {
       <p className="text-lg mb-8 text-white">
         Explora las rutinas de Piernas subidas por la comunidad.
       </p>
+      <InputBuscador onSearch={handleSearch} />
+
       <div className="space-y-6">
         {rutinas.length > 0 ? (
           rutinas.map((rutina, index) => (

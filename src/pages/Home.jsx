@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 function Home() {
   return (
-    <div className="relative h-screen p-6 bg-neutral-800 text-white">
+    <div className="relative h-full w-full bg-neutral-800 text-white">
       <h1 className="text-3xl font-bold mb-4">Bienvenido AmèTerle</h1>
       <p className="text-lg mb-8">
         Tu fuente de entrenamiento, nutrición y más.
@@ -33,8 +33,6 @@ function Home() {
       </div>
 
       <hr className="mt-32 border-t border-yellow-100" />
-
-      {/* Aqui abajo de esto me gustaría que haya un slider con las rutinas que han estado mejor calificadas, obviamente primero tengo que hacer un componente que tenga un form, con que la gente pueda subir su rutina, ese form podria ser, nombre apellido, tiene que especificar si es tronco inferior, core, superior, o movilidad, y si es pdf o foto, no ambas y listo */}
     </div>
   );
 }
