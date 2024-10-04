@@ -6,10 +6,19 @@ import {
   setDoc,
   collection,
   getFirestore,
+  getDoc,
   query,
   where,
   getDocs,
 } from "firebase/firestore";
+import {
+  getAuth,
+  signInWithRedirect,
+  signInWithPopup,
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 // Configuración de Firebase
 const firebaseConfig = {
@@ -24,15 +33,74 @@ const firebaseConfig = {
 // Inicializamos Firebase
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
-export const storage = getStorage(app); // Inicializamos Firebase Storage
+export const storage = getStorage(app);
+export const auth = getAuth(app);
 
-// Función para agregar una rutina
+// Configuramos Google Auth Provider
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: "select_account",
+});
+
+// Autenticación con Google Popup y Redirect
+export const signInWithGooglePopup = () =>
+  signInWithPopup(auth, googleProvider);
+export const signInWithGoogleRedirect = () =>
+  signInWithRedirect(auth, googleProvider);
+
+// Función para crear un usuario en Firestore
+export const createUserDocumentFromAuth = async (
+  userAuth,
+  additionalInformation = {}
+) => {
+  if (!userAuth) return;
+
+  const userDocRef = doc(db, "users", userAuth.uid);
+  const userSnapshot = await getDoc(userDocRef);
+
+  if (!userSnapshot.exists()) {
+    const { displayName, email } = userAuth;
+    const createdAt = new Date();
+
+    try {
+      await setDoc(userDocRef, {
+        displayName,
+        email,
+        createdAt,
+        ...additionalInformation,
+      });
+    } catch (error) {
+      console.error("Error al crear el usuario", error.message);
+    }
+  }
+
+  return userDocRef;
+};
+
+// Función para registrar usuario con email y contraseña
+export const createAuthUserWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+  return await createUserWithEmailAndPassword(auth, email, password);
+};
+
+export const signInAuthWithEmailAndPassword = async (email, password) => {
+  if (!email || !password) return;
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth, // La instancia de autenticación de Firebase
+      email, // Correo electrónico del usuario
+      password // Contraseña del usuario
+    );
+    return userCredential.user; // Devuelve el usuario autenticado
+  } catch (error) {
+    console.error("Error al autenticar:", error);
+    throw error; // Propaga el error para manejarlo en el componente
+  }
+};
+
+// Función para agregar una rutina a Firestore
 export const addRutina = async (infoPersonal, rutinaData) => {
   try {
-    // Generamos un ID de documento para la nueva rutina
-    const docRef = doc(collection(db, "rutinas"));
-
-    // Verificamos si el archivo de rutina existe
     if (!rutinaData.rutinaFile) {
       throw new Error("No se ha proporcionado ningún archivo.");
     }
@@ -46,32 +114,32 @@ export const addRutina = async (infoPersonal, rutinaData) => {
     const downloadURL = await getDownloadURL(storageRef);
     console.log("URL de descarga obtenida:", downloadURL);
 
-    // Guardamos los datos en Firestore junto con la URL del archivo
+    // Guardamos la rutina en Firestore
+    const docRef = doc(collection(db, "rutinas"));
     await setDoc(docRef, {
       ...infoPersonal,
       area: rutinaData.area,
-      fileURL: downloadURL, // Guardamos la URL del archivo
+      fileURL: downloadURL,
       descripcion: rutinaData.descripcion,
     });
 
     console.log("Rutina guardada con éxito en Firestore.");
   } catch (error) {
     console.error("Error al agregar la rutina:", error);
+    throw error;
   }
 };
 
 // Función para obtener rutinas filtradas por área
 export const getRutinasPorArea = async (area) => {
   try {
-    // Creamos una consulta para filtrar por área
     const rutinasRef = collection(db, "rutinas");
     const q = query(rutinasRef, where("area", "==", area));
 
-    // Ejecutamos la consulta
     const querySnapshot = await getDocs(q);
     const rutinas = querySnapshot.docs.map((doc) => doc.data());
 
-    console.log(`Rutinas de la área ${area}:`, rutinas);
+    console.log(`Rutinas del área ${area}:`, rutinas);
     return rutinas;
   } catch (error) {
     console.error("Error al obtener las rutinas:", error);

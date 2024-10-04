@@ -8,9 +8,11 @@ function SubirRutina() {
   const [area, setArea] = useState("");
   const [rutinaFile, setRutinaFile] = useState(null);
   const [descripcionRutina, setDescripcionRutina] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const infoPersonal = { nombre, email };
     const rutinaData = { area, rutinaFile, descripcion: descripcionRutina };
@@ -28,6 +30,8 @@ function SubirRutina() {
       setDescripcionRutina("");
     } catch (error) {
       console.error("Error al subir la rutina:", error);
+    } finally {
+      setLoading(false); // Desactivar loading
     }
   };
 
@@ -131,8 +135,9 @@ function SubirRutina() {
           type="submit"
           className="mt-6 bg-yellow-100 text-neutral-800 hover:bg-yellow-200"
           fullWidth
+          disabled={loading}
         >
-          Subir Rutina
+          {loading ? "Subiendo..." : "Subir Rutina"}
         </Button>
       </form>
     </Card>

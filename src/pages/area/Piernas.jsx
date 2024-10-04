@@ -39,7 +39,7 @@ function Piernas() {
       {/* Aquí es donde se pasa handleSearch como onSearch */}
       <InputBuscador onSearch={handleSearch} />
 
-      <div className="space-y-6">
+      <div className="space-y-6 mt-5">
         {rutinasFiltradas.length > 0 ? (
           rutinasFiltradas.map((rutina, index) => (
             <div
@@ -51,14 +51,14 @@ function Piernas() {
             >
               <div className="relative p-6 z-10">
                 <h2 className="text-2xl font-semibold mb-2 text-yellow-100">
-                  {rutina.nombre}
+                  {index + 1}. {rutina.nombre}
                 </h2>
                 <p className="text-white">{rutina.descripcion}</p>
                 <a
                   href={rutina.fileURL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-block text-yellow-100 hover:text-yellow-200"
+                  className="mt-4 inline-block bg-yellow-100 text-neutral-800 font-bold py-2 px-4 rounded-lg border border-yellow-100 transition duration-300 hover:bg-yellow-200"
                 >
                   Ver Rutina
                 </a>

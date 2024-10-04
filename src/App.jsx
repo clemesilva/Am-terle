@@ -14,6 +14,8 @@ import FullBody from "./pages/area/FullBody.jsx";
 import MovilidadActivacion from "./pages/area/MovilidadActivacion.jsx";
 import TroncoSuperior from "./pages/area/TroncoSuperior.jsx";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
+import Login from "./authentication/Login.jsx";
+import SignUpForm from "./authentication/SignUpForm.jsx";
 
 function App() {
   return (
@@ -41,6 +43,8 @@ function App() {
                 element={<MovilidadActivacion />}
               />
               <Route path="/troncoSuperior" element={<TroncoSuperior />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUpForm />} />
             </Routes>
           </div>
         </Card>
