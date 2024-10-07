@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-
 import Navbar1 from "./components/Navbar";
 import Home from "./pages/Home";
 import Routines from "./pages/Routines";
@@ -13,29 +12,44 @@ import Core from "./pages/area/Core.jsx";
 import FullBody from "./pages/area/FullBody.jsx";
 import MovilidadActivacion from "./pages/area/MovilidadActivacion.jsx";
 import TroncoSuperior from "./pages/area/TroncoSuperior.jsx";
-import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import Login from "./authentication/Login.jsx";
 import SignUpForm from "./authentication/SignUpForm.jsx";
+import AuthProvider from "./components/AuthProvider.jsx";
+import RequireAuth from "./components/RequireAuth"; // Importa RequireAuth
 
 function App() {
   return (
     <Router>
-      <div className="bg-neutral-800 min-h-screen ">
-        <Navbar1 />
-        <Card
-          color="transparent"
-          shadow={false}
-          className="bg-neutral-800 p-8 rounded-lg border-2 border-yellow-100 flex-grow"
-        >
-          <div className="flex-grow">
+      <AuthProvider>
+        <div className="bg-neutral-800 min-h-screen">
+          <Navbar1 />
+          <div className="bg-neutral-800 p-8 rounded-lg border-2 border-yellow-100 flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/routines" element={<Routines />} />
-              <Route path="/calendar" element={<Calendar />} />
               <Route path="/nutrition" element={<Nutrition />} />
               <Route path="/sensations" element={<Sensations />} />
+
+              {/* Rutas protegidas */}
+              <Route
+                path="/calendar"
+                element={
+                  <RequireAuth>
+                    <Calendar />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/subirRutina"
+                element={
+                  <RequireAuth>
+                    <SubirRutina />
+                  </RequireAuth>
+                }
+              />
+
+              {/* Rutas de áreas específicas */}
               <Route path="/piernas" element={<Piernas />} />
-              <Route path="/subirRutina" element={<SubirRutina />} />
               <Route path="/core" element={<Core />} />
               <Route path="/fullbody" element={<FullBody />} />
               <Route
@@ -43,13 +57,15 @@ function App() {
                 element={<MovilidadActivacion />}
               />
               <Route path="/troncoSuperior" element={<TroncoSuperior />} />
+
+              {/* Rutas de autenticación */}
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUpForm />} />
             </Routes>
           </div>
-        </Card>
-        <Footer1 />
-      </div>
+          <Footer1 />
+        </div>
+      </AuthProvider>
     </Router>
   );
 }
