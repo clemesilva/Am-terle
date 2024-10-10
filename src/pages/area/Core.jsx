@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { getRutinasPorArea, likeRutina } from "../../firebase/firebase";
+import {
+  getRutinasPorArea,
+  toggleLikeRutina,
+  auth,
+} from "../../firebase/firebase";
 import InputBuscador from "../../components/InputBuscador";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
@@ -7,16 +11,37 @@ import { faHeart } from "@fortawesome/free-solid-svg-icons";
 function Core() {
   const [rutinas, setRutinas] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [likes, setLikes] = useState({}); // Estado para gestionar qué rutinas han sido "likeadas"
+  const [likes, setLikes] = useState({});
+  const [error, setError] = useState("");
+  const user = auth.currentUser;
 
   const cargarRutinas = async () => {
-    const rutinasCore = await getRutinasPorArea("Core");
-    setRutinas(rutinasCore);
+    try {
+      const rutinasCore = await getRutinasPorArea("Core");
+
+      if (!user) {
+        setRutinas(rutinasCore);
+        return;
+      }
+
+      const likesEstado = {};
+      rutinasCore.forEach((rutina) => {
+        if (rutina.likesBy && rutina.likesBy.includes(user.uid)) {
+          likesEstado[rutina.id] = true; // Marcamos que ha dado like
+        }
+      });
+
+      setLikes(likesEstado);
+      setRutinas(rutinasCore);
+    } catch (error) {
+      console.error("Error al cargar rutinas:", error);
+      setError("Hubo un error al cargar las rutinas.");
+    }
   };
 
   useEffect(() => {
     cargarRutinas();
-  }, []);
+  }, [user]);
 
   const handleSearch = (term) => {
     setSearchTerm(term);
@@ -24,11 +49,19 @@ function Core() {
 
   const handleLike = async (rutinaId) => {
     try {
-      await likeRutina(rutinaId);
-      setLikes({ ...likes, [rutinaId]: true }); // Marca la rutina como "likeada"
-      cargarRutinas(); // Recarga las rutinas para actualizar los likes
+      setError("");
+      await toggleLikeRutina(rutinaId);
+
+      // Actualizar el estado de likes para reflejar el cambio
+      setLikes((prevLikes) => ({
+        ...prevLikes,
+        [rutinaId]: !prevLikes[rutinaId],
+      }));
+
+      cargarRutinas(); // Recargar las rutinas para actualizar los likes
     } catch (error) {
-      console.error("Error al dar like:", error);
+      console.error("Error al dar o quitar like:", error);
+      setError(error.message);
     }
   };
 
@@ -44,8 +77,8 @@ function Core() {
       <p className="text-lg mb-8 text-white">
         Explora las rutinas de Core subidas por la comunidad.
       </p>
+      {error && <p className="text-red-500">{error}</p>}
       <InputBuscador onSearch={handleSearch} />
-
       <div className="space-y-6 mt-5">
         {rutinasFiltradas.length > 0 ? (
           rutinasFiltradas.map((rutina) => (
@@ -74,8 +107,7 @@ function Core() {
                   >
                     <FontAwesomeIcon icon={faHeart} size="2x" />
                   </button>
-                  <p className="text-white">{rutina.likes ?? 0}</p>{" "}
-                  {/* Mostrar el número de likes */}
+                  <p className="text-white">{rutina.likes ?? 0}</p>
                 </div>
 
                 <a

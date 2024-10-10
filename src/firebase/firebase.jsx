@@ -13,6 +13,7 @@ import {
   updateDoc,
   increment,
   arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 import {
   getAuth,
@@ -81,10 +82,10 @@ export const createUserDocumentFromAuth = async (
 };
 
 //función para likear rutina
-export const likeRutina = async (rutinaId) => {
-  const user = auth.currentUser; // Obtiene el usuario autenticado
+export const toggleLikeRutina = async (rutinaId) => {
+  const user = auth.currentUser;
   if (!user) {
-    throw new Error("Debe iniciar sesión para dar like");
+    throw new Error("Debe iniciar sesión para dar o quitar like.");
   }
 
   const rutinaRef = doc(db, "rutinas", rutinaId);
@@ -93,18 +94,22 @@ export const likeRutina = async (rutinaId) => {
   if (rutinaSnapshot.exists()) {
     const rutinaData = rutinaSnapshot.data();
 
-    // Verificar si el UID del usuario ya está en la lista de "likesBy"
+    // Verificar si el usuario ya ha dado like
     if (rutinaData.likesBy && rutinaData.likesBy.includes(user.uid)) {
-      throw console.log("Ya has dado like a esta rutina");
+      // Si ya ha dado like, quitamos su UID del array y reducimos el número de likes
+      await updateDoc(rutinaRef, {
+        likes: increment(-1),
+        likesBy: arrayRemove(user.uid),
+      });
+    } else {
+      // Si no ha dado like, lo añadimos al array y aumentamos el número de likes
+      await updateDoc(rutinaRef, {
+        likes: increment(1),
+        likesBy: arrayUnion(user.uid),
+      });
     }
-
-    // Si el usuario no ha dado like aún, incrementamos el número de likes y añadimos su UID
-    await updateDoc(rutinaRef, {
-      likes: increment(1), // Incrementa en 1
-      likesBy: arrayUnion(user.uid), // Agrega el UID del usuario al array likesBy
-    });
   } else {
-    throw new Error("Rutina no encontrada");
+    throw new Error("Rutina no encontrada.");
   }
 };
 
