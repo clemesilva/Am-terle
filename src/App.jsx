@@ -28,7 +28,15 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/routines" element={<Routines />} />
               <Route path="/nutrition" element={<Nutrition />} />
-              <Route path="/sensations" element={<Sensations />} />
+
+              <Route
+                path="/sensations"
+                element={
+                  <RequireAuth>
+                    <Sensations />
+                  </RequireAuth>
+                }
+              />
 
               {/* Rutas protegidas */}
               <Route
@@ -39,14 +47,7 @@ function App() {
                   </RequireAuth>
                 }
               />
-              <Route
-                path="/subirRutina"
-                element={
-                  <RequireAuth>
-                    <SubirRutina />
-                  </RequireAuth>
-                }
-              />
+              <Route path="/subirRutina" element={<SubirRutina />} />
 
               {/* Rutas de áreas específicas */}
               <Route path="/piernas" element={<Piernas />} />

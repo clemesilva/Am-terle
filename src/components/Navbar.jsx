@@ -83,7 +83,7 @@ export default function Navbar1() {
         {user ? ( // Si hay un usuario autenticado, mostramos Cerrar Sesión
           <>
             <NavbarItem>
-              <span className="text-yellow-100 mr-4">{user.nombre}</span>
+              <span className="text-yellow-100 mr-4">{user.email}</span>
             </NavbarItem>
             <NavbarItem>
               <button

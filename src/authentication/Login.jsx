@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom"; // Importamos useNavigate y useLocation
 import { signInAuthWithEmailAndPassword } from "../firebase/firebase"; // Asegúrate de importar correctamente
 
 const Login = () => {
@@ -6,13 +7,23 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const navigate = useNavigate(); // Hook para redirigir
+  const location = useLocation(); // Hook para obtener la ubicación original
+
+  // Obtenemos la ruta original desde el estado de la ubicación, si está disponible
+  const from = location.state?.from?.pathname || "/"; // Ruta original o la página principal
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
+      // Iniciar sesión con Firebase
       const user = await signInAuthWithEmailAndPassword(email, password);
       alert("Inicio de sesión exitoso");
       setError(""); // Limpiar cualquier error si fue exitoso
+
+      // Redirigir al usuario a la página que intentaba acceder originalmente
+      navigate(from, { replace: true }); // Redirige a la página original o a "/"
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
 

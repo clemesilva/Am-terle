@@ -10,6 +10,9 @@ import {
   query,
   where,
   getDocs,
+  updateDoc,
+  increment,
+  arrayUnion,
 } from "firebase/firestore";
 import {
   getAuth,
@@ -77,6 +80,34 @@ export const createUserDocumentFromAuth = async (
   return userDocRef;
 };
 
+//función para likear rutina
+export const likeRutina = async (rutinaId) => {
+  const user = auth.currentUser; // Obtiene el usuario autenticado
+  if (!user) {
+    throw new Error("Debe iniciar sesión para dar like");
+  }
+
+  const rutinaRef = doc(db, "rutinas", rutinaId);
+  const rutinaSnapshot = await getDoc(rutinaRef);
+
+  if (rutinaSnapshot.exists()) {
+    const rutinaData = rutinaSnapshot.data();
+
+    // Verificar si el UID del usuario ya está en la lista de "likesBy"
+    if (rutinaData.likesBy && rutinaData.likesBy.includes(user.uid)) {
+      throw console.log("Ya has dado like a esta rutina");
+    }
+
+    // Si el usuario no ha dado like aún, incrementamos el número de likes y añadimos su UID
+    await updateDoc(rutinaRef, {
+      likes: increment(1), // Incrementa en 1
+      likesBy: arrayUnion(user.uid), // Agrega el UID del usuario al array likesBy
+    });
+  } else {
+    throw new Error("Rutina no encontrada");
+  }
+};
+
 // Función para registrar usuario con email y contraseña
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
   if (!email || !password) return;
@@ -116,11 +147,17 @@ export const addRutina = async (infoPersonal, rutinaData) => {
 
     // Guardamos la rutina en Firestore
     const docRef = doc(collection(db, "rutinas"));
+
+    // Guardamos la rutina en Firestore junto con el ID del documento y el array likesBy
     await setDoc(docRef, {
       ...infoPersonal,
       area: rutinaData.area,
       fileURL: downloadURL,
       descripcion: rutinaData.descripcion,
+      nombre: infoPersonal.nombre,
+      id: docRef.id,
+      likes: 0, // Inicializamos los likes en 0
+      likesBy: [], // Inicializamos el array de likesBy vacío
     });
 
     console.log("Rutina guardada con éxito en Firestore.");
