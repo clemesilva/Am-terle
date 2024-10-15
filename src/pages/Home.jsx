@@ -36,8 +36,8 @@ export default function Home() {
               Bienvenido a AmeTerle
             </h1>
             <p className="mt-6 text-lg leading-8 text-yellow-300">
-              Todo lo que necesitas para mejorar tus entrenamientos en un solo
-              lugar.
+              Todo lo que necesitas para compartir y expl tus entrenamientos en
+              un solo lugar.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link

@@ -51,7 +51,7 @@ function PerfilUsuario() {
         </div>
       </div>
 
-      {/* Categorías de Rutinas del Usuario */}
+      {/* Rutinas del usuario */}
       <div className="space-y-6">
         <RoutineCardPrivate
           title="PIERNAS"

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { useNavigate } from "react-router-dom"; // Para redirigir
 import {
   createAuthUserWithEmailAndPassword,
   createUserDocumentFromAuth,
@@ -15,6 +15,8 @@ const SignUpForm = () => {
 
   const { displayName, email, password, confirmPassword } = formFields;
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); // Estado para mensaje de éxito
+  const navigate = useNavigate(); // Hook para redirigir
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -39,6 +41,9 @@ const SignUpForm = () => {
       // Crear el documento del usuario en Firestore
       await createUserDocumentFromAuth(user, { displayName });
 
+      // Mostrar mensaje de éxito
+      setSuccessMessage("Registrado exitosamente. Redirigiendo...");
+
       // Reinicia el formulario
       setFormFields({
         displayName: "",
@@ -47,6 +52,11 @@ const SignUpForm = () => {
         confirmPassword: "",
       });
       setError("");
+
+      // Redirigir a la página principal después de 2 segundos
+      setTimeout(() => {
+        navigate("/"); // Redirige a la página principal
+      }, 2000); // Espera 2 segundos antes de redirigir
     } catch (error) {
       console.error("Error al registrar usuario", error);
       setError(error.message);
@@ -54,11 +64,15 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-neutral-800 p-8 rounded-lg border-2 border-neutral-600">
+    <div className="max-w-md mx-auto bg-neutral-800 p-8 rounded-lg border-2 border-neutral-600 mt-14">
       <h2 className="text-2xl font-semibold text-yellow-100 text-center mb-6">
         Registrarse
       </h2>
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+      {successMessage && (
+        <p className="text-green-500 text-center mb-4">{successMessage}</p>
+      )}{" "}
+      {/* Mostrar mensaje de éxito si existe */}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <input

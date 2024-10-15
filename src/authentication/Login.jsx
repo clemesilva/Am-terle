@@ -1,33 +1,30 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // Importamos useNavigate y useLocation
-import { signInAuthWithEmailAndPassword } from "../firebase/firebase"; // Asegúrate de importar correctamente
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  signInAuthWithEmailAndPassword,
+  signInWithGooglePopup,
+} from "../firebase/firebase"; // Importamos la función de Google
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const navigate = useNavigate(); // Hook para redirigir
-  const location = useLocation(); // Hook para obtener la ubicación original
-
-  // Obtenemos la ruta original desde el estado de la ubicación, si está disponible
-  const from = location.state?.from?.pathname || "/"; // Ruta original o la página principal
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      // Iniciar sesión con Firebase
       const user = await signInAuthWithEmailAndPassword(email, password);
       alert("Inicio de sesión exitoso");
-      setError(""); // Limpiar cualquier error si fue exitoso
-
-      // Redirigir al usuario a la página que intentaba acceder originalmente
-      navigate(from, { replace: true }); // Redirige a la página original o a "/"
+      setError("");
+      navigate(from, { replace: true });
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
 
-      // Manejar diferentes tipos de errores y mostrar mensajes más claros
       if (error.code === "auth/user-not-found") {
         setError("No se encontró ningún usuario con este correo.");
       } else if (error.code === "auth/wrong-password") {
@@ -37,6 +34,18 @@ const Login = () => {
       } else {
         setError("Error inesperado. Inténtalo más tarde.");
       }
+    }
+  };
+
+  // Maneja el inicio de sesión con Google
+  const handleGoogleSignIn = async () => {
+    try {
+      const user = await signInWithGooglePopup();
+      alert("Inicio de sesión con Google exitoso");
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error("Error al iniciar sesión con Google:", error);
+      setError("Error al iniciar sesión con Google. Inténtalo más tarde.");
     }
   };
 
@@ -76,6 +85,14 @@ const Login = () => {
           Iniciar Sesión
         </button>
       </form>
+
+      {/* Botón para iniciar sesión con Google */}
+      <button
+        onClick={handleGoogleSignIn}
+        className="w-full bg-red-600 text-white mt-4 py-2 px-4 rounded-lg hover:bg-red-700 transition-all"
+      >
+        Iniciar sesión con Google
+      </button>
     </div>
   );
 };

@@ -6,10 +6,9 @@ import { useAuth } from "../components/AuthProvider"; // Para gestionar autentic
 
 const navigation = [
   { name: "Inicio", href: "/" },
-
   { name: "Rutinas", href: "/routines" },
   { name: "Subir Rutina", href: "/subirRutina" },
-  { name: "Mis Rutinas", href: "/perfil" },
+  { name: "Mi Perfil", href: "/perfil" },
   { name: "Sensaciones", href: "/sensations" },
 ];
 
