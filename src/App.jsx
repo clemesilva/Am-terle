@@ -16,6 +16,12 @@ import Login from "./authentication/Login.jsx";
 import SignUpForm from "./authentication/SignUpForm.jsx";
 import AuthProvider from "./components/AuthProvider.jsx";
 import RequireAuth from "./components/RequireAuth"; // Importa RequireAuth
+import PerfilUsuario from "./pages/PerfilUsuario.jsx";
+import CorePrivado from "./pages/areaPrivada/CorePrivado.jsx";
+import TroncoPrivado from "./pages/areaPrivada/TroncoPrivado.jsx";
+import PiernasPrivado from "./pages/areaPrivada/PiernasPrivado.jsx";
+import FullPrivado from "./pages/areaPrivada/FullPrivado.jsx";
+import MovilidadPrivado from "./pages/areaPrivada/MovilidadPrivado.jsx";
 
 function App() {
   return (
@@ -62,6 +68,26 @@ function App() {
               {/* Rutas de autenticación */}
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUpForm />} />
+
+              <Route
+                path="/perfil"
+                element={
+                  <RequireAuth>
+                    <PerfilUsuario />
+                  </RequireAuth>
+                }
+              />
+              <Route path="/coreprivado" element={<CorePrivado />} />
+              <Route
+                path="/mis-rutinas/troncoSuperior"
+                element={<TroncoPrivado />}
+              />
+              <Route path="/piernasprivado" element={<PiernasPrivado />} />
+              <Route path="/mis-rutinas/fullbody" element={<FullPrivado />} />
+              <Route
+                path="/mis-rutinas/movilidadActivacion"
+                element={<MovilidadPrivado />}
+              />
             </Routes>
           </div>
           <Footer1 />

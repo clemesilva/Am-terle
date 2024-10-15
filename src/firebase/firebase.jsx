@@ -14,6 +14,7 @@ import {
   increment,
   arrayUnion,
   arrayRemove,
+  addDoc,
 } from "firebase/firestore";
 import {
   getAuth,
@@ -81,6 +82,38 @@ export const createUserDocumentFromAuth = async (
   return userDocRef;
 };
 
+// Función para agregar una nueva sensación a Firestore
+export const addSensacion = async (sensacionText) => {
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error("Debes estar autenticado para agregar una sensación.");
+  }
+
+  const sensacionRef = collection(db, "sensaciones");
+
+  await addDoc(sensacionRef, {
+    userId: user.uid, // Asociamos la sensación con el ID del usuario
+    sensacion: sensacionText,
+    createdAt: new Date(),
+  });
+};
+
+// Función para obtener sensaciones por usuario
+export const getSensationsByUser = async () => {
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error("Debes estar autenticado para ver tus sensaciones.");
+  }
+
+  const sensacionesRef = collection(db, "sensaciones");
+  const q = query(sensacionesRef, where("userId", "==", user.uid));
+
+  const querySnapshot = await getDocs(q);
+  const sensaciones = querySnapshot.docs.map((doc) => doc.data());
+
+  return sensaciones;
+};
+
 //función para likear rutina
 export const toggleLikeRutina = async (rutinaId) => {
   const user = auth.currentUser;
@@ -137,6 +170,11 @@ export const signInAuthWithEmailAndPassword = async (email, password) => {
 // Función para agregar una rutina a Firestore
 export const addRutina = async (infoPersonal, rutinaData) => {
   try {
+    const user = auth.currentUser; // Obtener el usuario autenticado
+    if (!user) {
+      throw new Error("Debes estar autenticado para subir una rutina.");
+    }
+
     if (!rutinaData.rutinaFile) {
       throw new Error("No se ha proporcionado ningún archivo.");
     }
@@ -160,6 +198,7 @@ export const addRutina = async (infoPersonal, rutinaData) => {
       fileURL: downloadURL,
       descripcion: rutinaData.descripcion,
       nombre: infoPersonal.nombre,
+      userId: user.uid, // Asociamos la rutina al usuario autenticado
       id: docRef.id,
       likes: 0, // Inicializamos los likes en 0
       likesBy: [], // Inicializamos el array de likesBy vacío
@@ -185,6 +224,30 @@ export const getRutinasPorArea = async (area) => {
     return rutinas;
   } catch (error) {
     console.error("Error al obtener las rutinas:", error);
+    return [];
+  }
+};
+
+// Función para obtener las rutinas filtradas por área y usuario autenticado EN MI PERFIIIIL
+export const getRutinasPorAreaYUsuario = async (area, userId) => {
+  try {
+    const rutinasRef = collection(db, "rutinas");
+    // Consulta que filtra por área y por el ID del usuario
+    const q = query(
+      rutinasRef,
+      where("area", "==", area),
+      where("userId", "==", userId)
+    );
+
+    const querySnapshot = await getDocs(q);
+    const rutinas = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return rutinas;
+  } catch (error) {
+    console.error("Error al obtener las rutinas por área y usuario:", error);
     return [];
   }
 };

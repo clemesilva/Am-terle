@@ -1,22 +1,67 @@
 import React, { useState, useEffect } from "react";
-import { getRutinasPorArea } from "../../firebase/firebase";
+import {
+  getRutinasPorArea,
+  toggleLikeRutina,
+  auth,
+} from "../../firebase/firebase";
 import InputBuscador from "../../components/InputBuscador";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
-function FullBody() {
+function Fullbody() {
   const [rutinas, setRutinas] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [likes, setLikes] = useState({});
+  const [error, setError] = useState("");
+  const user = auth.currentUser;
 
   const cargarRutinas = async () => {
-    const rutinasFullBody = await getRutinasPorArea("Full Body");
-    setRutinas(rutinasFullBody);
+    try {
+      const rutinasFullbody = await getRutinasPorArea("Full Body");
+
+      if (!user) {
+        setRutinas(rutinasFullbody);
+        return;
+      }
+
+      const likesEstado = {};
+      rutinasFullbody.forEach((rutina) => {
+        if (rutina.likesBy && rutina.likesBy.includes(user.uid)) {
+          likesEstado[rutina.id] = true;
+        }
+      });
+
+      setLikes(likesEstado);
+      setRutinas(rutinasFullbody);
+    } catch (error) {
+      console.error("Error al cargar rutinas:", error);
+      setError("Hubo un error al cargar las rutinas.");
+    }
   };
 
   useEffect(() => {
     cargarRutinas();
-  }, []);
+  }, [user]);
 
   const handleSearch = (term) => {
     setSearchTerm(term);
+  };
+
+  const handleLike = async (rutinaId) => {
+    try {
+      setError("");
+      await toggleLikeRutina(rutinaId);
+
+      setLikes((prevLikes) => ({
+        ...prevLikes,
+        [rutinaId]: !prevLikes[rutinaId],
+      }));
+
+      cargarRutinas();
+    } catch (error) {
+      console.error("Error al dar o quitar like:", error);
+      setError(error.message);
+    }
   };
 
   const rutinasFiltradas = rutinas.filter((rutina) =>
@@ -24,20 +69,20 @@ function FullBody() {
   );
 
   return (
-    <div className="p-6 bg-neutral-800">
+    <div className="p-6 bg-neutral-800 mt-10">
       <h1 className="text-3xl font-bold mb-4 text-yellow-100">
-        Rutinas de Cuerpo Completo
+        Rutinas de Full Body
       </h1>
       <p className="text-lg mb-8 text-white">
-        Explora las rutinas de Cuerpo Completo subidas por la comunidad.
+        Explora las rutinas de cuerpo completo subidas por la comunidad.
       </p>
+      {error && <p className="text-red-500">{error}</p>}
       <InputBuscador onSearch={handleSearch} />
-
       <div className="space-y-6 mt-5">
         {rutinasFiltradas.length > 0 ? (
-          rutinasFiltradas.map((rutina, index) => (
+          rutinasFiltradas.map((rutina) => (
             <div
-              key={index}
+              key={rutina.id}
               className="relative rounded-lg overflow-hidden text-yellow-100 cursor-pointer transform transition-transform duration-300 hover:scale-105 border border-yellow-100"
               style={{
                 background: "linear-gradient(to right, #3f3f46, #18181b)",
@@ -45,9 +90,30 @@ function FullBody() {
             >
               <div className="relative p-6 z-10">
                 <h2 className="text-2xl font-semibold mb-2 text-yellow-100">
-                  {index + 1}. {rutina.nombre}
+                  {rutina.nombre}
                 </h2>
                 <p className="text-white">{rutina.descripcion}</p>
+
+                <div className="mt-4 flex items-center space-x-2">
+                  <button
+                    onClick={() => handleLike(rutina.id)}
+                    className={`focus:outline-none transition-transform duration-300 ${
+                      likes[rutina.id]
+                        ? "text-yellow-100"
+                        : "text-neutral-800 hover:scale-105"
+                    }`}
+                  >
+                    <FontAwesomeIcon
+                      icon={faHeart}
+                      size="2x"
+                      style={{
+                        stroke: "#fef9c3",
+                        strokeWidth: "20px",
+                      }}
+                    />
+                  </button>
+                  <p className="text-white">{rutina.likes ?? 0}</p>
+                </div>
 
                 <a
                   href={rutina.fileURL}
@@ -62,7 +128,7 @@ function FullBody() {
           ))
         ) : (
           <p className="text-white">
-            No hay rutinas disponibles para Cuerpo Completo en este momento.
+            No hay rutinas disponibles de Full Body en este momento.
           </p>
         )}
       </div>
@@ -70,4 +136,4 @@ function FullBody() {
   );
 }
 
-export default FullBody;
+export default Fullbody;

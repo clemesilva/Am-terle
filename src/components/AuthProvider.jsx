@@ -1,24 +1,18 @@
-import React, { useEffect, useState, createContext, useContext } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import { auth } from "../firebase/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
 // Crear el contexto de autenticación
 const AuthContext = createContext(null);
 
-// Componente `AuthProvider` que envuelve toda la aplicación
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Estado para manejar la carga
 
   useEffect(() => {
-    // Observador de cambios en la autenticación
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        // Usuario autenticado
-        setUser(currentUser); // Actualiza el estado con el usuario autenticado
-      } else {
-        // Usuario no autenticado
-        setUser(null); // Resetea el usuario a null si no está autenticado
-      }
+      setUser(currentUser);
+      setLoading(false); // Cambia el estado de carga cuando el usuario ha sido verificado
     });
 
     // Limpia el observador cuando el componente se desmonta
@@ -27,16 +21,15 @@ const AuthProvider = ({ children }) => {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth); // Cierra la sesión
-      alert("Sesión cerrada");
+      await signOut(auth);
     } catch (error) {
       console.error("Error al cerrar sesión", error);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, handleLogout }}>
-      {children} {/* Renderiza los hijos dentro del contexto */}
+    <AuthContext.Provider value={{ user, handleLogout, loading }}>
+      {children}
     </AuthContext.Provider>
   );
 };

@@ -24,7 +24,7 @@ function Nutrition() {
   );
 
   return (
-    <div className="p-6 bg-neutral-800">
+    <div className="p-6 bg-neutral-800 flex flex-col min-h-screen">
       <h1 className="text-3xl font-bold mb-4 text-yellow-100">
         Guías de Nutrición a tu alcance
       </h1>

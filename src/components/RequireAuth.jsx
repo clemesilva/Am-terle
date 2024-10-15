@@ -1,15 +1,17 @@
 import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "./AuthProvider"; // Importamos el hook useAuth
+import { Navigate } from "react-router-dom";
+import { useAuth } from "./AuthProvider";
 
 const RequireAuth = ({ children }) => {
-  const { user } = useAuth(); // Extraemos el usuario autenticado del contexto
-  const location = useLocation(); // Hook para obtener la ubicación actual
+  const { user, loading } = useAuth(); // Accedemos al estado de carga y al usuario
+
+  if (loading) {
+    return <p>Cargando...</p>; // Muestra un mensaje mientras espera la autenticación
+  }
 
   if (!user) {
     // Si no hay usuario autenticado, redirige a la página de login
-    // Guardamos la ruta original a la que el usuario intentaba acceder
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to="/login" />;
   }
 
   // Si el usuario está autenticado, renderiza el contenido protegido

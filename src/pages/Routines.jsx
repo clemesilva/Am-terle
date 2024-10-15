@@ -18,7 +18,7 @@ const RoutineCard = ({ title, description, to }) => (
 
 function Routines() {
   return (
-    <div className="p-6 bg-neutral-800">
+    <div className="p-6 bg-neutral-800 mt-10">
       <h1 className="text-3xl font-bold mb-4 text-yellow-100">Rutinas</h1>
       <p className="text-lg text-white mb-8">
         Explora nuestras rutinas de entrenamiento diseñadas para todos los

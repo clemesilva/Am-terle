@@ -1,136 +1,160 @@
-import React from "react";
-import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenuToggle,
-  NavbarMenu,
-  NavbarMenuItem,
-} from "@nextui-org/react";
+import React, { useState } from "react";
+import { Dialog, DialogPanel } from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
-import { useAuth } from "../components/AuthProvider"; // Importamos el hook de autenticación
+import { useAuth } from "../components/AuthProvider"; // Para gestionar autenticación
 
-export default function Navbar1() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+const navigation = [
+  { name: "Inicio", href: "/" },
 
-  const { user, handleLogout } = useAuth(); // Accedemos al estado de autenticación y a la función de logout
+  { name: "Rutinas", href: "/routines" },
+  { name: "Subir Rutina", href: "/subirRutina" },
+  { name: "Mis Rutinas", href: "/perfil" },
+  { name: "Sensaciones", href: "/sensations" },
+];
 
-  const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
-  ];
+export default function Navbar() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, handleLogout } = useAuth(); // Accedemos al estado de autenticación y función de logout
 
   return (
-    <Navbar className="bg-neutral-800" onMenuOpenChange={setIsMenuOpen}>
-      <NavbarContent>
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="sm:hidden"
-        />
-        <NavbarBrand>
-          <p className="font-bold text-yellow-100">ACME</p>
-        </NavbarBrand>
-      </NavbarContent>
-
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link to="/" className="text-yellow-100">
-            INICIO
+    <header className="absolute inset-x-0 top-0 z-50">
+      <nav
+        aria-label="Global"
+        className="flex items-center justify-between p-6 lg:px-8 mb-24"
+      >
+        <div className="flex lg:flex-1">
+          <Link to="/" className="-m-1.5 p-1.5">
+            <span className="sr-only">AmèTerle</span>
+            <img
+              alt="AmèTerle Logo"
+              src="https://tailwindui.com/plus/img/logos/mark.svg?color=yellow&shade=100"
+              className="h-8 w-auto"
+            />
           </Link>
-        </NavbarItem>
+        </div>
+        <div className="flex lg:hidden">
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(true)}
+            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-yellow-100"
+          >
+            <span className="sr-only">Open main menu</span>
+            <Bars3Icon aria-hidden="true" className="h-6 w-6" />
+          </button>
+        </div>
+        <div className="hidden lg:flex lg:gap-x-12">
+          {navigation.map((item) => (
+            <Link
+              key={item.name}
+              to={item.href}
+              className="text-sm font-semibold leading-6 text-yellow-100 hover:text-yellow-200"
+            >
+              {item.name}
+            </Link>
+          ))}
+        </div>
 
-        <NavbarItem>
-          <Link to="/routines" className="text-yellow-100">
-            RUTINAS
-          </Link>
-        </NavbarItem>
-
-        <NavbarItem>
-          <Link to="/nutrition" className="text-yellow-100">
-            NUTRICIÓN
-          </Link>
-        </NavbarItem>
-
-        <NavbarItem>
-          <Link to="/subirRutina" className="text-yellow-100">
-            SUBIR RUTINA
-          </Link>
-        </NavbarItem>
-
-        <NavbarItem>
-          <Link to="/sensations" className="text-yellow-100">
-            SENSACIONES
-          </Link>
-        </NavbarItem>
-
-        <NavbarItem>
-          <Link to="/calendar" className="text-yellow-100">
-            CALENDARIO
-          </Link>
-        </NavbarItem>
-      </NavbarContent>
-
-      <NavbarContent justify="end">
-        {user ? ( // Si hay un usuario autenticado, mostramos Cerrar Sesión
-          <>
-            <NavbarItem>
-              <span className="text-yellow-100 mr-4">{user.email}</span>
-            </NavbarItem>
-            <NavbarItem>
-              <button
-                onClick={handleLogout} // Función para cerrar sesión
-                className="bg-yellow-100 text-neutral-800 py-2 px-4 rounded hover:bg-yellow-200"
+        {/* Botón de autenticación */}
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="text-sm font-semibold leading-6 text-yellow-100 hover:text-yellow-200"
+            >
+              Log out
+            </button>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-sm font-semibold leading-6 text-yellow-100 hover:text-yellow-200"
               >
-                Cerrar Sesión
-              </button>
-            </NavbarItem>
-          </>
-        ) : (
-          // Si no hay usuario autenticado, mostramos Login y Sign Up
-          <>
-            <NavbarItem className="hidden lg:flex">
-              <Link to="/login" className="text-yellow-100">
-                Login
+                Log in <span aria-hidden="true">&rarr;</span>
               </Link>
-            </NavbarItem>
-            <NavbarItem>
-              <Link to="/signup" className="text-blue-600">
+              <Link
+                to="/signup"
+                className="ml-4 text-sm font-semibold leading-6 text-yellow-100 hover:text-yellow-200"
+              >
                 Sign Up
               </Link>
-            </NavbarItem>
-          </>
-        )}
-      </NavbarContent>
+            </>
+          )}
+        </div>
+      </nav>
 
-      <NavbarMenu>
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
-            <Link
-              color={
-                index === 2
-                  ? "primary"
-                  : index === menuItems.length - 1
-                  ? "danger"
-                  : "foreground"
-              }
-              className="w-full"
-              href="#"
-              size="lg"
-            >
-              {item}
+      {/* Menú móvil */}
+      <Dialog
+        open={mobileMenuOpen}
+        onClose={setMobileMenuOpen}
+        className="lg:hidden"
+      >
+        <div className="fixed inset-0 z-50" />
+        <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-neutral-800 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          <div className="flex items-center justify-between">
+            <Link to="/" className="-m-1.5 p-1.5">
+              <span className="sr-only">AmèTerle</span>
+              <img
+                alt="AmèTerle Logo"
+                src="https://tailwindui.com/plus/img/logos/mark.svg?color=yellow&shade=100"
+                className="h-8 w-auto"
+              />
             </Link>
-          </NavbarMenuItem>
-        ))}
-      </NavbarMenu>
-    </Navbar>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="-m-2.5 rounded-md p-2.5 text-yellow-100"
+            >
+              <span className="sr-only">Close menu</span>
+              <XMarkIcon aria-hidden="true" className="h-6 w-6" />
+            </button>
+          </div>
+
+          {/* Enlaces del menú móvil */}
+          <div className="mt-6 flow-root">
+            <div className="-my-6 divide-y divide-gray-500/10">
+              <div className="space-y-2 py-6">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-yellow-100 hover:bg-gray-700"
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Autenticación en el menú móvil */}
+              <div className="py-6">
+                {user ? (
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-yellow-100 hover:bg-gray-700"
+                  >
+                    Log out
+                  </button>
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-yellow-100 hover:bg-gray-700"
+                    >
+                      Log in
+                    </Link>
+                    <Link
+                      to="/signup"
+                      className="-mx-3 mt-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-yellow-100 hover:bg-gray-700"
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </DialogPanel>
+      </Dialog>
+    </header>
   );
 }
